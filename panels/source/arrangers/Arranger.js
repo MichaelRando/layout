@@ -363,16 +363,20 @@
 				unit = unit || 'px';
 				if (!this.updating) {
 					// IE10 uses setBounds because of control hit caching problems seem in some apps
-					if (enyo.dom.canTransform() && !control.preventTransform && !enyo.platform.android && enyo.platform.ie !== 10) {
+					if (enyo.dom.canTransform() && !control.preventTransform && enyo.platform.ie !== 10) {
 						var l = bounds.left, t = bounds.top;
 						l = enyo.isString(l) ? l : l && (l + unit);
 						t = enyo.isString(t) ? t : t && (t + unit);
-						enyo.dom.transform(control, {translateX: l || null, translateY: t || null});
+						if (enyo.dom.canAccelerate()) {
+							enyo.dom.transform(control, {translate3d: (l || 0)+","+(t || 0)+",0px"});
+						} else {
+							enyo.dom.transform(control, {translateX: (l || null), translateY: (t || null)});
+						}
 					} else {
 						// If a previously positioned control has subsequently been marked with
 						// preventTransform, we need to clear out any old translation values.
 						if (enyo.dom.canTransform() && control.preventTransform) {
-							enyo.dom.transform(control, {translateX: null, translateY: null});
+							enyo.dom.transform(control, {translate3d:null, translateX: null, translateY: null});
 						}
 						control.setBounds(bounds, unit);
 					}

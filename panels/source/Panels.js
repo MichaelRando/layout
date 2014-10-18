@@ -506,6 +506,7 @@
 			if (this.dragging) {
 				event.preventDefault();
 				this.dragTransition(event);
+				return true;
 			}
 		},
 
